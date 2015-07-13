@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    style="@style/GridViewMovieDetails"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardCornerRadius="@dimen/corner_radius_card">
+
+    <LinearLayout
+        style="@style/CardContent">
+
+        <TextView
+            android:id="@+id/release_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            tools:text="2015"/>
+
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            tools:text="5.4 / 10"
+            android:paddingBottom="@dimen/padding_small"/>
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

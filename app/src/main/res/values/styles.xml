@@ -1,0 +1,28 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorAccent">@color/accent</item>
+    </style>
+
+    <style name="CardContent">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:paddingLeft">@dimen/padding_standard</item>
+        <item name="android:paddingRight">@dimen/padding_standard</item>
+        <item name="android:paddingTop">@dimen/padding_large</item>
+        <item name="android:paddingBottom">@dimen/padding_large</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="GridViewMovieDetails">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="MovieGridView">
+        <item name="android:choiceMode">none</item>
+    </style>
+
+</resources>

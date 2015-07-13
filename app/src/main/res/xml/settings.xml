@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="@string/pref_key_sort"
+        android:title="@string/movie_sort"
+        android:entries="@array/pref_sort_by"
+        android:defaultValue="popularity.desc"
+        android:entryValues="@array/pref_sort_by_values"/>
+
+    <CheckBoxPreference
+        android:key="@string/pref_key_show_favorites_only"
+        android:title="@string/show_favorites_only"
+        android:defaultValue="false"/>
+</PreferenceScreen>

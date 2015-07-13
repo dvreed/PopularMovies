@@ -1,0 +1,18 @@
+<resources>
+<string name="app_name">Popular Movies</string>
+<string name="action_settings">Settings</string>
+<string name="plot">Plot</string>
+<string name="release_date">Release date</string>
+<string name="rating">Rating</string>
+<string name="rating_out_of_ten">%s / 10</string>
+<string name="movie_sort">Sort movies by</string>
+<string name="param_poster_size">w185</string>
+<string name="review_by">Review by %s</string>
+<string name="favorite">Favorite</string>
+<string name="added_to_favorites">Added to favorites</string>
+
+<string name="pref_key_sort">pref_sort</string>
+<string name="pref_key_favorites">pref_favorites</string>
+<string name="pref_key_show_favorites_only">pref_favorites_only</string>
+<string name="show_favorites_only">Show only favorites</string>
+</resources>
