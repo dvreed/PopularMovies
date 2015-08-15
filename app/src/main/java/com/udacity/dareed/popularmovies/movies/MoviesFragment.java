@@ -1,7 +1,7 @@
 package com.udacity.dareed.popularmovies.movies;
 
-import android.os.Parcelable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,11 +23,12 @@ import retrofit.RetrofitError;
 
 public class MoviesFragment extends android.app.Fragment implements AdapterView.OnItemClickListener {
 
-    private static final String STATE_GRID = "mGridState";
+    private static final String STATE_GRIDVIEW = "GridView";
+    private static final String STATE_MOVIE_LIST = "MovieList";
 
     private ArrayList<Movie> mMovieList;
+    private Parcelable mGridViewState;
 
-    Parcelable mGridState;
     TheMovieDB mMovieDB;
 
     PopularMoviesAdapter moviesAdapter;
@@ -37,13 +38,15 @@ public class MoviesFragment extends android.app.Fragment implements AdapterView.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState == null || !savedInstanceState.containsKey(STATE_GRID)) {
+        if(savedInstanceState == null
+                || !savedInstanceState.containsKey(STATE_GRIDVIEW)
+                || !savedInstanceState.containsKey(STATE_MOVIE_LIST)) {
             mMovieDB = new TheMovieDB();
             fetchMovies();
         }
         else {
             // restore the move list from the saved bundle
-            mMovieList = savedInstanceState.getParcelableArrayList(STATE_GRID);
+            mMovieList = savedInstanceState.getParcelableArrayList(STATE_MOVIE_LIST);
         }
     }
 
@@ -72,7 +75,9 @@ public class MoviesFragment extends android.app.Fragment implements AdapterView.
 
     @Override
     public void onSaveInstanceState(Bundle state) {
-        state.putParcelableArrayList(STATE_GRID, mMovieList);
+        state.putParcelableArrayList(STATE_MOVIE_LIST, mMovieList);
+        mGridViewState = mPopularMoviesGridView.onSaveInstanceState();
+        state.putParcelable(STATE_GRIDVIEW, mGridViewState);
         super.onSaveInstanceState(state);
     }
 
@@ -82,6 +87,9 @@ public class MoviesFragment extends android.app.Fragment implements AdapterView.
         if(savedInstanceState != null) {
             // Populate the gridview with our movies on restore (like on screen rotation)
             loadMoviesIntoGridView(mMovieList);
+            // Restore our scrolling position
+            mGridViewState = savedInstanceState.getParcelable(STATE_GRIDVIEW);
+            mPopularMoviesGridView.onRestoreInstanceState(mGridViewState);
         }
     }
 
@@ -94,9 +102,6 @@ public class MoviesFragment extends android.app.Fragment implements AdapterView.
     private void loadMoviesIntoGridView(ArrayList<Movie> movies) {
         moviesAdapter = new PopularMoviesAdapter(getActivity(), movies, PreferenceManager.isShowingFavoritesOnly(getActivity()));
         mPopularMoviesGridView.setAdapter(moviesAdapter);
-        if(mGridState != null) {
-            mPopularMoviesGridView.onRestoreInstanceState(mGridState);
-        }
     }
 
     Callback<Response> getPopularMoviesCallback = new Callback<Response>() {
