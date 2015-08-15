@@ -21,11 +21,11 @@ import butterknife.InjectView;
 
 public class PopularMoviesAdapter extends BaseAdapter {
 
-    private List<Movie> movies;
+    private ArrayList<Movie> movies;
     private LayoutInflater layoutInflater;
     private Context context;
 
-    public PopularMoviesAdapter(Context context, List<Movie> movies, boolean isShowingFavoritesOnly) {
+    public PopularMoviesAdapter(Context context, ArrayList<Movie> movies, boolean isShowingFavoritesOnly) {
         if(isShowingFavoritesOnly) {
             this.movies = filterFavorites(context, movies);
         } else {
@@ -35,9 +35,9 @@ public class PopularMoviesAdapter extends BaseAdapter {
         this.layoutInflater = LayoutInflater.from(context);
     }
 
-    private List<Movie> filterFavorites(Context context, List<Movie> movies) {
+    private ArrayList<Movie> filterFavorites(Context context, List<Movie> movies) {
         Set<String> favoriteIds = PreferenceManager.getFavoriteMovieIds(context);
-        List<Movie> favoriteMovies = new ArrayList<>();
+        ArrayList<Movie> favoriteMovies = new ArrayList<>();
         for(Movie movie : movies) {
             if(favoriteIds.contains(movie.id)) {
                 favoriteMovies.add(movie);

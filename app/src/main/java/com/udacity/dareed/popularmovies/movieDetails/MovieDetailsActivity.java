@@ -68,7 +68,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
             finish();
             return;
         }
-        movie = (Movie) intent.getSerializableExtra(EXTRA_MOVIE);
+        //movie = (Movie) intent.getSerializableExtra(EXTRA_MOVIE);
+        movie = (Movie) intent.getParcelableExtra(EXTRA_MOVIE);
     }
 
 }

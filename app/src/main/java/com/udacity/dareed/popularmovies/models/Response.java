@@ -1,13 +1,13 @@
 package com.udacity.dareed.popularmovies.models;
 
-import java.util.List;
+import java.util.ArrayList;
 
 
 public class Response {
     public final int page;
-    public final List<Movie> results;
+    public final ArrayList<Movie> results;
 
-    public Response(int page, List<Movie> results) {
+    public Response(int page, ArrayList<Movie> results) {
         this.page = page;
         this.results = results;
     }

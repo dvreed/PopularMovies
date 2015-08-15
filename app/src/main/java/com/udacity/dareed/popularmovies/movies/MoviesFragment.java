@@ -14,7 +14,7 @@ import com.udacity.dareed.popularmovies.models.Response;
 import com.udacity.dareed.popularmovies.settings.PreferenceManager;
 import com.udacity.dareed.popularmovies.API.TheMovieDB;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -23,15 +23,29 @@ import retrofit.RetrofitError;
 
 public class MoviesFragment extends android.app.Fragment implements AdapterView.OnItemClickListener {
 
-    private static final String STATE_GRID = "gridState";
+    private static final String STATE_GRID = "mGridState";
 
-    Parcelable gridState;
-    TheMovieDB movieDb;
+    private ArrayList<Movie> mMovieList;
+
+    Parcelable mGridState;
+    TheMovieDB mMovieDB;
 
     PopularMoviesAdapter moviesAdapter;
 
     @InjectView(R.id.gridPopularMovies)
-    GridView gridPopularMovies;
+    GridView mPopularMoviesGridView;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState == null || !savedInstanceState.containsKey(STATE_GRID)) {
+            mMovieDB = new TheMovieDB();
+            fetchMovies();
+        }
+        else {
+            // restore the move list from the saved bundle
+            mMovieList = savedInstanceState.getParcelableArrayList(STATE_GRID);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,7 +56,7 @@ public class MoviesFragment extends android.app.Fragment implements AdapterView.
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.inject(this, view);
-        gridPopularMovies.setOnItemClickListener(this);
+        mPopularMoviesGridView.setOnItemClickListener(this);
     }
 
     @Override
@@ -51,50 +65,45 @@ public class MoviesFragment extends android.app.Fragment implements AdapterView.
         ButterKnife.reset(this);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        movieDb = new TheMovieDB();
-        fetchMovies();
-    }
 
     private void fetchMovies() {
-        movieDb.getMovieDbService().getPopularMovies(PreferenceManager.getSortType(getActivity()), getPopularMoviesCallback);
+        mMovieDB.getMovieDbService().getPopularMovies(PreferenceManager.getSortType(getActivity()), getPopularMoviesCallback);
     }
 
     @Override
     public void onSaveInstanceState(Bundle state) {
+        state.putParcelableArrayList(STATE_GRID, mMovieList);
         super.onSaveInstanceState(state);
-        gridState = gridPopularMovies.onSaveInstanceState();
-        state.putParcelable(STATE_GRID, gridState);
     }
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if(savedInstanceState != null) {
-            gridState = savedInstanceState.getParcelable(STATE_GRID);
+            // Populate the gridview with our movies on restore (like on screen rotation)
+            loadMoviesIntoGridView(mMovieList);
         }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        gridPopularMovies.setItemChecked(position, true);
+        mPopularMoviesGridView.setItemChecked(position, true);
         ((SelectionCallback)getActivity()).onSelectedMovieChanged(moviesAdapter.getItem(position));
     }
 
-    private void loadMoviesIntoGridView(List<Movie> movies) {
+    private void loadMoviesIntoGridView(ArrayList<Movie> movies) {
         moviesAdapter = new PopularMoviesAdapter(getActivity(), movies, PreferenceManager.isShowingFavoritesOnly(getActivity()));
-        gridPopularMovies.setAdapter(moviesAdapter);
-        if(gridState != null) {
-            gridPopularMovies.onRestoreInstanceState(gridState);
+        mPopularMoviesGridView.setAdapter(moviesAdapter);
+        if(mGridState != null) {
+            mPopularMoviesGridView.onRestoreInstanceState(mGridState);
         }
     }
 
     Callback<Response> getPopularMoviesCallback = new Callback<Response>() {
         @Override
         public void success(Response movies, retrofit.client.Response response) {
-            loadMoviesIntoGridView(movies.results);
+            mMovieList = movies.results;
+            loadMoviesIntoGridView(mMovieList);
         }
 
         @Override

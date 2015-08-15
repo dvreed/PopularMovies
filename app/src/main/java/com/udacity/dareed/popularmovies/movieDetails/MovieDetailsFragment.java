@@ -39,7 +39,7 @@ public class MovieDetailsFragment extends Fragment {
         MovieDetailsFragment fragment = new MovieDetailsFragment();
 
         Bundle args = new Bundle();
-        args.putSerializable(EXTRA_MOVIE, movie);
+        args.putParcelable(EXTRA_MOVIE, movie);
         fragment.setArguments(args);
 
         return fragment;
@@ -65,7 +65,8 @@ public class MovieDetailsFragment extends Fragment {
 
     private Movie getMovie() {
         if(movie == null) {
-            movie = (Movie) getArguments().getSerializable(EXTRA_MOVIE);
+            //movie = (Movie) getArguments().getSerializable(EXTRA_MOVIE);
+            movie = (Movie) getArguments().getParcelable(EXTRA_MOVIE);
         }
         return movie;
     }
