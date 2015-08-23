@@ -28,6 +28,7 @@ public class MoviesFragment extends android.app.Fragment implements AdapterView.
 
     private ArrayList<Movie> mMovieList;
     private Parcelable mGridViewState;
+    private String mSortType;
 
     TheMovieDB mMovieDB;
 
@@ -42,6 +43,7 @@ public class MoviesFragment extends android.app.Fragment implements AdapterView.
                 || !savedInstanceState.containsKey(STATE_GRIDVIEW)
                 || !savedInstanceState.containsKey(STATE_MOVIE_LIST)) {
             mMovieDB = new TheMovieDB();
+            mSortType = PreferenceManager.getSortType(getActivity());
             fetchMovies();
         }
         else {
@@ -69,8 +71,18 @@ public class MoviesFragment extends android.app.Fragment implements AdapterView.
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        String sortType = PreferenceManager.getSortType(getActivity());
+        if (sortType != mSortType) {
+            mSortType = sortType;
+            fetchMovies();
+        }
+    }
+
     private void fetchMovies() {
-        mMovieDB.getMovieDbService().getPopularMovies(PreferenceManager.getSortType(getActivity()), getPopularMoviesCallback);
+        mMovieDB.getMovieDbService().getPopularMovies(mSortType, getPopularMoviesCallback);
     }
 
     @Override
