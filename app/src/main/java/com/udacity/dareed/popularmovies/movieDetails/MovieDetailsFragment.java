@@ -5,11 +5,15 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -17,9 +21,19 @@ import com.udacity.dareed.popularmovies.ImageUtils;
 import com.udacity.dareed.popularmovies.R;
 import com.udacity.dareed.popularmovies.API.TheMovieDB;
 import com.udacity.dareed.popularmovies.models.Movie;
+import com.udacity.dareed.popularmovies.models.Review;
+import com.udacity.dareed.popularmovies.models.ReviewsResponse;
+import com.udacity.dareed.popularmovies.models.Trailer;
+import com.udacity.dareed.popularmovies.models.TrailersResponse;
+import com.udacity.dareed.popularmovies.settings.PreferenceManager;
+
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class MovieDetailsFragment extends Fragment {
 
@@ -31,6 +45,12 @@ public class MovieDetailsFragment extends Fragment {
     TextView tvReleaseDate;
     @InjectView(R.id.plot) TextView tvPlot;
     @InjectView(R.id.rating) TextView tvRating;
+    @InjectView(R.id.trailer_list)
+    RecyclerView trailerList;
+    @InjectView(R.id.review_list)
+    FakeListView reviewList;
+    @InjectView(R.id.favorite)
+    ImageButton btnFavorite;
 
     TheMovieDB movieDb = new TheMovieDB();
     Movie movie;
@@ -55,6 +75,8 @@ public class MovieDetailsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.inject(this, view);
         updateUi();
+        loadTrailers();
+        loadReviews();
     }
 
     @Override
@@ -71,6 +93,41 @@ public class MovieDetailsFragment extends Fragment {
         return movie;
     }
 
+    private void loadReviews() {
+        movieDb.getMovieDbService().getReviews(getMovie().id, new retrofit.Callback<ReviewsResponse>() {
+            @Override
+            public void success(ReviewsResponse reviewsResponse, Response response) {
+                setupReviewUi(reviewsResponse.results);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+            }
+        });
+    }
+
+    private void setupReviewUi(List<Review> results) {
+        reviewList.setAdapter(new ReviewAdapter(getActivity(), results));
+    }
+
+    private void loadTrailers() {
+        movieDb.getMovieDbService().getTrailers(getMovie().id, new retrofit.Callback<TrailersResponse>() {
+            @Override
+            public void success(TrailersResponse trailersResponse, Response response) {
+                setupTrailerUi(trailersResponse.results);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+            }
+        });
+    }
+
+    private void setupTrailerUi(List<Trailer> trailers) {
+        trailerList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        trailerList.setAdapter(new TrailerAdapter(getActivity(), trailers));
+    }
+
 
     private void updateUi() {
         Picasso.with(getActivity()).load(Movie.Tools.getFullPosterPath(getMovie(), getString(R.string.param_poster_size))).into(imagePoster, new Callback() {
@@ -84,10 +141,23 @@ public class MovieDetailsFragment extends Fragment {
             }
         });
 
+        boolean isMovieFavorited = PreferenceManager.isMovieInFavorites(getActivity(), movie);
+        btnFavorite.setActivated(isMovieFavorited);
+        btnFavorite.setEnabled(!isMovieFavorited);
+
         tvPlot.setText(getMovie().overview);
         tvRating.setText(getString(R.string.rating_out_of_ten, String.format("%.1f", getMovie().vote_average)));
         tvReleaseDate.setText(getMovie().getReleaseYear());
     }
+
+    @OnClick(R.id.favorite)
+    public void onFavoriteClick(View v) {
+        PreferenceManager.addMovieToFavorites(getActivity(), movie);
+        Toast.makeText(getActivity(), getString(R.string.added_to_favorites), Toast.LENGTH_SHORT).show();
+        btnFavorite.setActivated(true);
+        btnFavorite.setEnabled(false);
+    }
+
 
     private void updateBackgroundColor() {
         Bitmap bitmap = ImageUtils.getBitmap(imagePoster);

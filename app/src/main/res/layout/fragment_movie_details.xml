@@ -42,6 +42,17 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/padding_standard" />
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/trailer_list"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_trailer"
+            android:layout_marginBottom="@dimen/padding_standard" />
+
+        <com.udacity.dareed.popularmovies.movieDetails.FakeListView
+            android:id="@+id/review_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/padding_standard" />
 
         <android.support.v4.widget.Space
             android:layout_width="match_parent"
